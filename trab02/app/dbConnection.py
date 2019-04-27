@@ -1,4 +1,5 @@
 import psycopg2
+import psycopg2.extras
 
 class DBConnection:
     _cursor = None
@@ -6,7 +7,7 @@ class DBConnection:
 
     def __init__(self):
         self._connection = psycopg2.connect(user="postgres", password="Lock@001", host="127.0.0.1", port="5432",database="asa")
-        self._cursor = self._connection.cursor()
+        self._cursor = self._connection.cursor(cursor_factory = psycopg2.extras.RealDictCursor)
 
     def getCursor(self):
         return self._cursor
@@ -23,9 +24,9 @@ class DBConnection:
     def executeOnly(self, query, params):
         try:
             self.getCursor().execute(query, params)
-            status = True
+            status = { 'status': '200 - OK' }
         except (Exception, psycopg2.Error) as error:
-            status = error
+            status = { 'status': error }
         finally:
             if(status == True):
                 self.getConnection().commit()
@@ -33,4 +34,16 @@ class DBConnection:
             self.getConnection().close()
         
         return status
+
+    def executeRead(self, query, params = None):
+        try:
+            self.getCursor().execute(query, params)
+            status = self.getCursor().fetchall()
+
+        except (Exception, psycopg2.Error) as error:
+            status = error
+        finally:
+            self.getCursor().close()
+            self.getConnection().close()
+            return status
         

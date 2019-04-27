@@ -32,4 +32,12 @@ class Categorias:
         '''
         params = (self._idCategoria, self._tituloCategoria, self._descricaoCategoria, self._fgAtivo)
         new_conn = DBConnection()
-        new_conn.executeOnly(query, params)
+        return new_conn.executeOnly(query, params)
+
+    def selecionaCategoria(self = None):
+        query = '''
+            SELECT * FROM TRB02.TB_CATEGORIAS
+        '''
+        params = None
+        new_conn = DBConnection()
+        return new_conn.executeRead(query, params)
