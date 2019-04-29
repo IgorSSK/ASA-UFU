@@ -11,7 +11,7 @@ class Produto:
     _quantidademinima = None
     _fg_ativo = None
 
-    def __init__(self, idProduto, idFornecedor, idCategoria, nomeProduto, descricaoProduto, valorUnit, quantidade, quantidadeMin, fgAtivo):
+    def __init__(self, idProduto, idFornecedor = None, idCategoria = None, nomeProduto = None, descricaoProduto = None, valorUnit = None, quantidade = None, quantidadeMin = None, fgAtivo = None):
         self._id_produtos = idProduto 
         self._id_fornecedor = idFornecedor
         self._id_categoria = idCategoria
@@ -43,7 +43,7 @@ class Produto:
     def insereProduto(self):
         query = '''
             INSERT INTO TRB02.TB_PRODUTOS (ID_PRODUTOS, ID_FORNECEDOR, ID_CATEGORIA, NOMEPRODUTO, DESCRICAOPRODUTO, VALORUNITARIO, QUANTIDADE, QUANTIDADEMINIMA, FG_ATIVO)
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
         '''
         params = (self._id_produtos, self._id_fornecedor, self._id_categoria, self._nomeproduto, self._descricaoproduto, self._valorunitario, self._quantidade, self._quantidademinima, self._fg_ativo)
         new_conn = DBConnection()
@@ -56,3 +56,19 @@ class Produto:
         params = None
         new_conn = DBConnection()
         return new_conn.executeRead(query, params)
+
+    def atualizaProduto(self, columns, values):
+        query = '''
+            UPDATE TRB02.TB_PRODUTOS SET {columns} WHERE ID_PRODUTOS = %s 
+        '''.format(columns = columns)
+        params = values + (self._id_produtos,)
+        new_conn = DBConnection()
+        return new_conn.executeOnly(query, params)
+
+    def deletaProduto(self):
+        query = '''
+            DELETE FROM TRB02.TB_PRODUTOS WHERE ID_PRODUTOS = %s
+        '''
+        params = self._id_produtos
+        new_conn = DBConnection()
+        return new_conn.executeOnly(query, params)

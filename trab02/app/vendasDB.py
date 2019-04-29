@@ -10,7 +10,7 @@ class Venda:
     _quantidade = None
     _fg_ativo = None
 
-    def __init__(self, id_venda, id_vendedor, id_produtos, id_categoria, datavenda, valortotal, quantidade, fg_ativo):
+    def __init__(self, id_venda, id_vendedor = None, id_produtos = None, id_categoria = None, datavenda = None, valortotal = None, quantidade = None, fg_ativo = None):
         self._id_venda = id_venda
         self._id_vendedor = id_vendedor
         self._id_categoria = id_categoria
@@ -39,3 +39,19 @@ class Venda:
         params = None
         new_conn = DBConnection()
         return new_conn.executeRead(query, params)
+
+    def atualizaVenda(self, columns, values):
+        query = '''
+            UPDATE TRB02.TB_VENDAS SET {columns} WHERE ID_VENDA = %s 
+        '''.format(columns = columns)
+        params = values + (self._id_venda,)
+        new_conn = DBConnection()
+        return new_conn.executeOnly(query, params)
+
+    def deletaVenda(self):
+        query = '''
+            DELETE FROM TRB02.TB_VENDAS WHERE ID_VENDA = %s
+        '''
+        params = self._id_venda
+        new_conn = DBConnection()
+        return new_conn.executeOnly(query, params)

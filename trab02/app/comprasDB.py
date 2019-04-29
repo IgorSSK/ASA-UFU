@@ -10,7 +10,7 @@ class Compra:
     _quantidade = None
     _fg_ativo = None
 
-    def __init__(self, id_compra, id_fornecedor, id_produtos, id_categoria, datacompra, valortotal, quantidade, fg_ativo):
+    def __init__(self, id_compra, id_fornecedor = None, id_produtos = None, id_categoria = None, datacompra = None, valortotal = None, quantidade = None, fg_ativo = None):
         self._id_compra = id_compra
         self._id_fornecedor = id_fornecedor
         self._id_produtos = id_produtos
@@ -20,8 +20,9 @@ class Compra:
         self._quantidade = quantidade
         self._fg_ativo = fg_ativo
 
-    def getIdCompra(self):
-        return self._id_compra
+    def __init_subclass__(self, id_compra):
+        self._id_compra = id_compra
+
 
     def insereCompra(self):
         query = '''
@@ -39,3 +40,19 @@ class Compra:
         params = None
         new_conn = DBConnection()
         return new_conn.executeRead(query, params)
+
+    def atualizaCompra(self, columns, values):
+        query = '''
+            UPDATE TRB02.TB_COMPRAS SET {columns} WHERE ID_COMPRA = %s 
+        '''.format(columns = columns)
+        params = values + (self._id_compra,)
+        new_conn = DBConnection()
+        return new_conn.executeOnly(query, params)
+
+    def deletaCompra(self):
+        query = '''
+            DELETE FROM TRB02.TB_COMPRAS WHERE ID_COMPRA = %s
+        '''
+        params = self._id_compra
+        new_conn = DBConnection()
+        return new_conn.executeOnly(query, params)

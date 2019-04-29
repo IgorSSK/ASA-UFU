@@ -26,9 +26,9 @@ class DBConnection:
             self.getCursor().execute(query, params)
             status = { 'status': '200 - OK' }
         except (Exception, psycopg2.Error) as error:
-            status = { 'status': error }
+            status = { 'status': str(error) }
         finally:
-            if(status == True):
+            if(status['status'] == '200 - OK'):
                 self.getConnection().commit()
             self.getCursor().close()
             self.getConnection().close()

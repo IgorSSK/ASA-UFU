@@ -9,7 +9,7 @@ class Vendedor:
     _dataadmissao = None
     _fg_ativo  = None
 
-    def __init__(self, id_vendedor, cpf, nome, carteiradetrabalho, telefone, dataadmissao, fg_ativo):
+    def __init__(self, id_vendedor, cpf = None, nome = None, carteiradetrabalho = None, telefone = None, dataadmissao = None, fg_ativo = None):
         self._id_vendedor  = id_vendedor
         self._cpf = cpf
         self._nome = nome
@@ -28,7 +28,7 @@ class Vendedor:
         '''
         params = (self._id_vendedor, self._cpf, self._nome, self._carteiradetrabalho, self._telefone, self._dataadmissao, self._fg_ativo)
         new_conn = DBConnection()
-        new_conn.executeOnly(query, params)
+        return new_conn.executeOnly(query, params)
 
     def selecionaVendedores(self = None):
         query = '''
@@ -37,3 +37,19 @@ class Vendedor:
         params = None
         new_conn = DBConnection()
         return new_conn.executeRead(query, params)
+
+    def atualizaVendedores(self, columns, values):
+        query = '''
+            UPDATE TRB02.TB_VENDEDORES SET {columns} WHERE ID_VENDEDOR = %s 
+        '''.format(columns = columns)
+        params = values + (self._id_vendedor,)
+        new_conn = DBConnection()
+        return new_conn.executeOnly(query, params)
+
+    def deletaVendedores(self):
+        query = '''
+            DELETE FROM TRB02.TB_VENDEDORES WHERE ID_VENDEDOR = %s
+        '''
+        params = self._id_vendedor
+        new_conn = DBConnection()
+        return new_conn.executeOnly(query, params)
